@@ -25,7 +25,7 @@ public class DataDrivenLoginTest extends BaseTest {
 
     @DataProvider(name = "loginUsers", parallel = true)
     public Object[][] loginUsers() {
-        return CsvReader.read("testdata/login_users.csv");
+        return CsvReader.read("testdata/login_users.csv", Config.get("csv.rows"));
     }
 
     @Test(dataProvider = "loginUsers")

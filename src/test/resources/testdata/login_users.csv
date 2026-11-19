@@ -1,8 +1,8 @@
-description,userKey,passwordKey,expected,expectedText
-Standard account logs in,saucedemo.user.standard,saucedemo.password,success,Products
-Locked-out account is rejected,saucedemo.user.locked,saucedemo.password,error,this user has been locked out
-Problem account logs in,saucedemo.user.problem,saucedemo.password,success,Products
-Slow account logs in,saucedemo.user.performance,saucedemo.password,success,Products
-Error account logs in,saucedemo.user.error,saucedemo.password,success,Products
-Visual account logs in,saucedemo.user.visual,saucedemo.password,success,Products
-Valid account with wrong password is rejected,saucedemo.user.standard,saucedemo.password.invalid,error,do not match
+test_id,description,userKey,passwordKey,expected,expectedText
+1,Standard account logs in,saucedemo.user.standard,saucedemo.password,success,Products
+2,Locked-out account is rejected,saucedemo.user.locked,saucedemo.password,error,this user has been locked out
+3,Problem account logs in,saucedemo.user.problem,saucedemo.password,success,Products
+4,Slow account logs in,saucedemo.user.performance,saucedemo.password,success,Products
+5,Error account logs in,saucedemo.user.error,saucedemo.password,success,Products
+6,Visual account logs in,saucedemo.user.visual,saucedemo.password,success,Products
+7,Valid account with wrong password is rejected,saucedemo.user.standard,saucedemo.password.invalid,error,do not match
