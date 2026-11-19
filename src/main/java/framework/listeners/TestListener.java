@@ -17,7 +17,12 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        ExtentManager.startTest(result.getMethod().getMethodName(), result.getMethod().getDescription());
+        Object[] params = result.getParameters();
+        String name = result.getMethod().getMethodName();
+        if (params.length > 0 && params[0] instanceof String scenario) {
+            name = name + " - " + scenario;
+        }
+        ExtentManager.startTest(name, result.getMethod().getDescription());
         if (result.getParameters().length > 0) {
             StepLogger.info("Data: " + Arrays.toString(result.getParameters()));
         }
