@@ -29,9 +29,9 @@ public class DataDrivenLoginTest extends BaseTest {
     }
 
     @Test(dataProvider = "loginUsers")
-    public void loginScenarios(String description, String userKey, String passwordKey,
+    public void loginScenarios(String testId, String description, String userKey, String passwordKey,
                                String expected, String expectedText) {
-        Allure.getLifecycle().updateTestCase(testCase -> testCase.setName(description));
+        Allure.getLifecycle().updateTestCase(testCase -> testCase.setName("TC" + testId + " - " + description));
 
         actions.open(SITE);
         actions.sendSecret("id=user-name", Secrets.get(userKey));

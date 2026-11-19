@@ -19,13 +19,18 @@ public final class CsvReader {
     }
 
     /**
-     * Same as {@link #read(String)} but keeps only the rows picked by {@code rows}. Row numbers are 1-based and
-     * do not count the header. Accepts "5", "2,5", "3-5", "1,4-6", or text that appears in the first column
-     * (e.g. "Error account"). Blank/null = every row.
+     * Same as {@link #read(String)} but keeps only the picked rows. Accepts "5", "2,5", "3-5", "1,4-6", or text
+     * found in the description. Numbers match the "test_id" column when the file has one, otherwise the 1-based
+     * row position (header not counted). Blank/null = every row.
      */
     public static Object[][] read(String classpathFile, String rows) {
         Object[][] all = read(classpathFile);
         if (rows == null || rows.isBlank()) return all;
+
+        java.util.List<String> header = java.util.Arrays.asList(readHeader(classpathFile));
+        int idCol = header.indexOf("test_id");
+        int descCol = header.indexOf("description");
+        if (descCol < 0) descCol = idCol >= 0 ? 1 : 0;
 
         java.util.Set<Integer> wanted = new java.util.TreeSet<>();
         boolean numeric = rows.matches("[\\d,\\-\\s]+");
@@ -39,8 +44,13 @@ public final class CsvReader {
         }
         List<Object[]> picked = new ArrayList<>();
         for (int i = 0; i < all.length; i++) {
-            boolean hit = numeric ? wanted.contains(i + 1)
-                    : String.valueOf(all[i][0]).toLowerCase().contains(rows.trim().toLowerCase());
+            boolean hit;
+            if (numeric) {
+                String id = idCol >= 0 ? String.valueOf(all[i][idCol]).trim() : String.valueOf(i + 1);
+                hit = id.matches("\\d+") && wanted.contains(Integer.parseInt(id));
+            } else {
+                hit = String.valueOf(all[i][descCol]).toLowerCase().contains(rows.trim().toLowerCase());
+            }
             if (hit) picked.add(all[i]);
         }
         if (picked.isEmpty()) {
@@ -48,6 +58,17 @@ public final class CsvReader {
                     + " (it has " + all.length + " data rows)");
         }
         return picked.toArray(new Object[0][]);
+    }
+
+    private static String[] readHeader(String classpathFile) {
+        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathFile);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            String[] cells = reader.readLine().split(",", -1);
+            for (int i = 0; i < cells.length; i++) cells[i] = cells[i].trim();
+            return cells;
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not read " + classpathFile, e);
+        }
     }
 
     public static Object[][] read(String classpathFile) {
